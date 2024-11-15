@@ -1,10 +1,9 @@
 export type AuthSchemes = {
-    type: 'basic' | 'oauth2' | 'apikey' | 'bearerToken';
+    type: 'basic' | 'apikey' | 'bearerToken' | 'no-auth';
     key: string
     value: string
 };
 
-// Define individual transport method types
 type WebhookMethod = {
     method: 'webhook';
     url: string;
@@ -31,7 +30,7 @@ type GraphQLMethod = {
 
 type FunctionMethod = {
     method: 'function';
-    func: (args: any) => Promise<any>;
+    onExpiration: (key: string) => Promise<any>;
 };
 
 type TransportMethod = 
@@ -44,4 +43,5 @@ type TransportMethod =
 export type RedisVaultInitConfig = {
     redis_url: string
     transport: TransportMethod
+    logExpireKey?: boolean
 }
