@@ -1,3 +1,28 @@
+export interface BrokerExchangeInterface {
+    channel: any
+    name: string | undefined | null
+    type: 'direct' | 'fanout' | 'headers' | 'topic'
+    durable: boolean
+    autoDelete?: boolean
+    internal?: boolean
+}
+
+export interface QueueTypeInterface {
+    name: string | undefined | null,
+    channel: any,
+    options?: {
+        durable: boolean,
+        arguments?: {
+            'x-queue-type'?: 'classic' | 'quorum' | 'stream',
+            'x-dead-letter-exchange'?: string | string[] | null,
+            'x-dead-letter-routing-key'?: string | string[] | null
+        }
+    }
+}
+export type EventPayload = {
+    key: string
+    expireOn: string
+}
 export type AuthSchemes = {
     type: 'basic' | 'apikey' | 'bearerToken' | 'no-auth';
     key: string | null
@@ -13,19 +38,9 @@ type WebhookMethod = {
 type RabbitMQMethod = {
     method: 'rabbitmq';
     url: string;
-    auth?: AuthSchemes;
-};
-
-type KafkaMethod = {
-    method: 'kafka';
-    url: string;
-    auth?: AuthSchemes;
-};
-
-type GraphQLMethod = {
-    method: 'graphql';
-    url: string;
-    auth?: AuthSchemes;
+    exchange: string
+    queue: string
+    routing: string
 };
 
 type FunctionMethod = {
@@ -36,8 +51,6 @@ type FunctionMethod = {
 type TransportMethod = 
     | WebhookMethod
     | RabbitMQMethod
-    | KafkaMethod
-    | GraphQLMethod
     | FunctionMethod;
 
 export type RexSyncInitConfig = {
