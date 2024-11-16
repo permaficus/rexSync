@@ -9,3 +9,50 @@ rexSync is a lightweight NodeJS module designed to listen to Redis key expiratio
 * <b>Easy Integration:</b> Simple to set up and integrate with existing Node.js applications.
 * <b>Flexible Use Cases:</b> Ideal for data syncing, logging, workflow automation, and more.
 * <b>Configurable Storage Options:</b> Sync expired keys to databases or external systems (optional).
+
+### Installation
+```bash
+# install locally
+npm i --save rexsync
+```
+
+### Usage
+```javascript
+// ES6
+import { RexSync } from "rexsync";
+
+const rex = new RexSync({
+    redisUrl: "<redis-url">,
+    // Print out which key is expired. set to false to deactivate
+    logExpireKey: true or false,
+    // There are 3 method you can select to 
+    transport: {
+        method: "function",
+        onExpiration: async (key) => {
+            // do whatever you want with this key.
+            // you can re-sync your cache by fetching the data from your DB or
+            // refresh your redis cache object with this key
+            // example:
+            await refreshCache(key)
+        }
+    }
+    // Using webhooks
+    transport: {
+        method: "webhook",
+        url: "https://yourapp.com/webhooks",
+        auth: {
+            type: 'apikey', // valid type: bearerToken, basic, apikey and no-auth
+            key: 'x-api-key',
+            value: '<your api key>'
+        }
+    }
+    // Using RabbitMQ
+    transport: {
+        method: "rabbitmq",
+        exchange: "<rabbitmq-exchange>",
+        queue: "<rabbitmq-queue>",
+        routing: "<rabbitmq-routing-key>",
+        url: "<rabbitmq-url>"
+    }
+})
+```
