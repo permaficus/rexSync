@@ -1,6 +1,6 @@
 import axios, { AxiosInstance } from 'axios';
 import * as pkgJson from '../../package.json';
-import { AuthSchemes } from "../../types";
+import { AuthSchemes, EventPayload } from "../../types";
 import { RexSyncError } from './errHandler';
 
 export default class HttpClient {
@@ -18,7 +18,7 @@ export default class HttpClient {
         })
     }
 
-    send =  async (payload: string, opts: { url: string, auth: AuthSchemes }): Promise<void> => {
+    send =  async (payload: EventPayload, opts: { url: string, auth: AuthSchemes }): Promise<void> => {
         const instance = this;
         await instance.httpClient({
             url: opts.url,
