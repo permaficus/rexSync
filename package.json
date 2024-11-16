@@ -1,6 +1,6 @@
 {
   "name": "rexsync",
-  "version": "1.0.40",
+  "version": "1.0.41",
   "main": "dist/index.js",
   "files": [
     "dist",
@@ -16,12 +16,12 @@
     "redis cache"
   ],
   "scripts": {
-    "build": "npx enmav --update-version && rm -rf dist && npm run build:esm",
-    "build:esm": "tsc"
+    "build": "npx enmav --update-version && rm -rf dist && npm run build:esm && tsc",
+    "build:release": "rm -rf dist && npx enmav --update-version && tsc && npm publish --access=public"
   },
   "author": "permaficus <abukhalif2019@gmail.com>",
   "license": "MIT",
-  "description": "exSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs",
+  "description": "rexSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/permaficus/rexSync.git"
