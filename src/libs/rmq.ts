@@ -1,6 +1,6 @@
 import * as MessageBroker from 'amqplib';
 import EventEmitter from 'events';
-import { BrokerExchangeInterface, QueueTypeInterface } from "../../types";
+import { BrokerExchangeInterface, EventPayload, QueueTypeInterface } from "../../types";
 import { RexSyncError } from './errHandler';
 
 class RabbitInstance extends EventEmitter {
@@ -122,7 +122,7 @@ class RabbitInstance extends EventEmitter {
         try {
             if (this.attempt > this.maxAttempt) {
                 this.reconnecting = false;
-                console.log(`[REXSYNC] Max reconnection attempts (${this.maxAttempt}) reached`);
+                console.log(`[REX-SYNC] Max reconnection attempts (${this.maxAttempt}) reached`);
                 setTimeout(async () => {
                     this.attempt = 0;
                     await this.reconnect();
@@ -183,7 +183,7 @@ class RabbitInstance extends EventEmitter {
 }
 
 const sendMessage = async (
-    payload: { key: string, expireOn: string },
+    payload: EventPayload,
     config: { exchange: string, queue?: string, routing?: string }
 ): Promise<void> => {
     const rbmq = RabbitInstance.getInstance();
