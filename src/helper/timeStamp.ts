@@ -1,4 +1,4 @@
-export const timeStamp = (): string => {
+export function timeStamp (): string  {
     const date = new Date();
     const format = (num: number) => num.toString().padStart(2, '0');
     
