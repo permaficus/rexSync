@@ -101,7 +101,6 @@ class RabbitInstance extends EventEmitter {
             }
         } catch (error) {
             this.onError(error);
-            throw new RexSyncError(error.message);
         }
     }
 
@@ -110,7 +109,6 @@ class RabbitInstance extends EventEmitter {
             await args.channel.assertQueue(args.name, { ...args.options });
         } catch (error) {
             this.onError(error);
-            throw new RexSyncError(error.message);
         }
     }
 
@@ -122,7 +120,7 @@ class RabbitInstance extends EventEmitter {
         try {
             if (this.attempt > this.maxAttempt) {
                 this.reconnecting = false;
-                console.log(`[REX-SYNC] Max reconnection attempts (${this.maxAttempt}) reached`);
+                console.log(`[RBMQ] Max reconnection attempts (${this.maxAttempt}) reached`);
                 setTimeout(async () => {
                     this.attempt = 0;
                     await this.reconnect();
