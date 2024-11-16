@@ -18,35 +18,39 @@ npm i --save rexsync
 
 ### Usage
 ```javascript
-// ES6
+// ES6 import
 import { RexSync } from "rexsync";
 
 const rex = new RexSync({
-    redisUrl: "<redis-url">,
-    // Print out which key is expired. set to false to deactivate
-    logExpireKey: true or false,
-    // There are 3 method you can select to 
+    redisUrl: "<redis-url>",
+    
+    // Enable or disable logging of expired keys.
+    // Set to `true` to log which key expired, or `false` to disable logging.
+    logExpireKey: true, // or false
+    
+    // Define the transport method for handling expiration events.
     transport: {
+        // Option 1: Use a custom function to handle expiration events.
         method: "function",
         onExpiration: async (key) => {
-            // do whatever you want with this key.
-            // you can re-sync your cache by fetching the data from your DB or
-            // refresh your redis cache object with this key
-            // example:
-            await refreshCache(key)
+            // Handle the expired key as needed.
+            // For example, refresh your Redis cache or synchronize it with your database:
+            await refreshCache(key);
         }
-    }
-    // Using webhooks
+    },
+    
+    // Option 2: Use a webhook to handle expiration events.
     transport: {
         method: "webhook",
         url: "https://yourapp.com/webhooks",
         auth: {
-            type: 'apikey', // valid type: bearerToken, basic, apikey and no-auth
+            type: 'apikey', // Valid types: 'bearerToken', 'basic', 'apikey', or 'no-auth'.
             key: 'x-api-key',
-            value: '<your api key>'
+            value: '<your-api-key>'
         }
-    }
-    // Using RabbitMQ
+    },
+    
+    // Option 3: Use RabbitMQ to handle expiration events.
     transport: {
         method: "rabbitmq",
         exchange: "<rabbitmq-exchange>",
@@ -54,5 +58,9 @@ const rex = new RexSync({
         routing: "<rabbitmq-routing-key>",
         url: "<rabbitmq-url>"
     }
-})
+});
+
+// Start listening for key expiration events.
+rex.startListening();
+
 ```
