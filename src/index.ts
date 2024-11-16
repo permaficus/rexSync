@@ -1,35 +1,42 @@
 import { redisSubscriber, RedisClientType} from "./libs/redis";
-import { RedisVaultInitConfig } from "../types/index";
+import { RexSyncInitConfig } from "../types/index";
 import HttpClient from "./libs/httpClient";
+import { timeStamp } from "./helper/timeStamp";
 
 const apiConn = new HttpClient();
 
-class RedisVault {
-    private args: RedisVaultInitConfig;
+class RexSync {
+    private args: RexSyncInitConfig;
     private client: RedisClientType;
     private redisChannel: string;
 
-    constructor (args: RedisVaultInitConfig) {
+    constructor (args: RexSyncInitConfig) {
         this.args = args
         this.init()
     }
 
     private init(): void {
-        const redisClient = new redisSubscriber(this.args.redis_url);
-        this.client = redisClient.client();
-        this.redisChannel = redisClient.channel();
+        const redis = new redisSubscriber(this.args.redisUrl);
+        this.client = redis.client();
+        this.redisChannel = redis.channel();
     }
     
     private async handleExpirationEvent(key: string, channel: string): Promise<void> {
         if (!channel) return;
         try {
-            const { method, auth, url } = this.args.transport;
+            if (this.args.logExpireKey) {
+                console.log(`[REX-EVENT] ${timeStamp()}: Received expiration event for key: ${key}`)
+            }
+            const { method } = this.args.transport;
             
             if (method === "webhook") {
-                await apiConn.send(key, { url, auth });
+                await apiConn.send(key, { url: this.args.transport.url, auth: this.args.transport.auth });
+            }
+            if (method === "function") {
+                await this.args.transport.onExpiration(key);
             }
         } catch (error) {
-            console.error(`Error retrieving expired data for key ${key}:`, error);
+            throw new Error(error)
         }
     }
 
@@ -40,4 +47,4 @@ class RedisVault {
 
 }
 
-export default RedisVault;
+export default RexSync;
