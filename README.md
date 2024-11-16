@@ -12,4 +12,4 @@ rexSync is a lightweight NodeJS module designed to listen to Redis key expiratio
 
 * <b>Flexible Use Cases:</b> Ideal for data syncing, logging, workflow automation, and more.
 
-<b>Configurable Storage Options:</b> Sync expired keys to databases or external systems (optional).
+* <b>Configurable Storage Options:</b> Sync expired keys to databases or external systems (optional).
