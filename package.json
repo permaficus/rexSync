@@ -1,14 +1,39 @@
 {
-  "name": "redis-vault",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "rexsync",
+  "version": "1.0.40",
+  "main": "dist/index.js",
+  "files": [
+    "dist",
+    "package.json",
+    "license.md",
+    "README.md"
+  ],
+  "keywords": [
+    "redis",
+    "redis-vault",
+    "redis expiry sync",
+    "cache sync",
+    "redis cache"
+  ],
   "scripts": {
-    "build:asv": "enmav --update-version && tsc"
+    "build": "npx enmav --update-version && rm -rf dist && npm run build:esm",
+    "build:esm": "tsc"
   },
   "author": "permaficus <abukhalif2019@gmail.com>",
   "license": "MIT",
-  "description": "",
+  "description": "exSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/permaficus/rexSync.git"
+  },
+  "bugs": {
+    "url": "https://github.com/permaficus/rexSync/issues"
+  },
+  "homepage": "https://github.com/permaficus/rexSync/#readme",
   "dependencies": {
+    "amqplib": "^0.10.4",
+    "axios": "^1.7.7",
+    "redis": "^4.7.0",
     "typescript": "^5.6.3"
   },
   "devDependencies": {
