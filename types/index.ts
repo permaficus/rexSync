@@ -1,7 +1,7 @@
 export type AuthSchemes = {
     type: 'basic' | 'apikey' | 'bearerToken' | 'no-auth';
-    key: string
-    value: string
+    key: string | null
+    value: string | null
 };
 
 type WebhookMethod = {
@@ -40,8 +40,8 @@ type TransportMethod =
     | GraphQLMethod
     | FunctionMethod;
 
-export type RedisVaultInitConfig = {
-    redis_url: string
+export type RexSyncInitConfig = {
+    redisUrl: string
     transport: TransportMethod
     logExpireKey?: boolean
 }
