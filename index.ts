@@ -1,3 +1,3 @@
-import RedisVault from "./src/index";
+import RexSync from "./src/index";
 
-export default RedisVault;
+export default RexSync;
