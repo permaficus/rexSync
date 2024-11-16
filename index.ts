@@ -1,3 +1,3 @@
-import RexSync from "./src/index";
+import { RexSync } from "./src/index";
 
-export default RexSync;
+export { RexSync };

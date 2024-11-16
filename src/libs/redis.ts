@@ -3,7 +3,7 @@ import { RexSyncError } from "./errHandler"
 
 class redisSubscriber {
     private redisUrl: string
-    private redisChannel: `__keyevent@0__:expired`;
+    private redisChannel: string = `__keyevent@0__:expired`;
     private subscriber: RedisClientType | null = null;
 
     constructor(redisUrl: string) {
@@ -19,16 +19,16 @@ class redisSubscriber {
         throw new RexSyncError(message);
     }
 
-    private init (): void {
+    private async init (): Promise<void> {
         if (!this.subscriber) {
             this.subscriber = createClient({
                 url: this.redisUrl
             });
+
             this.subscriber.on('error', (err) => {
                 this.handleError(`[REDIS] Connection Error: ${err.message || err.code}`);
             });
-    
-            this.subscriber.connect().catch((err) => {
+            await this.subscriber.connect().catch((err) => {
                 this.handleError(`[REDIS] Error during initial connection: ${err.message || err.code}`);
             });
         }
