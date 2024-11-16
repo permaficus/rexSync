@@ -182,10 +182,10 @@ class RabbitInstance extends EventEmitter {
     }
 }
 
-const sendMessage = async (
+async function sendMessage (
     payload: EventPayload,
     config: { exchange: string, queue?: string, routing?: string }
-): Promise<void> => {
+): Promise<void> {
     const rbmq = RabbitInstance.getInstance();
     let rmqUrl: string | null = null;
 
