@@ -1,14 +1,15 @@
-# RedisVault
+# rexSync
 
-RedisVault is a Node.js application that captures and syncs expired cache objects from Redis to external storage, providing a reliable backup for data that would otherwise be lost upon expiration. By listening to Redis key event notifications, RedisVault ensures that valuable data is stored safely, making it ideal for applications where caching and data retention are both critical.
+rexSync is a lightweight NodeJS module designed to listen to Redis key expiration events in real-time. By leveraging Redis keyspace notifications, rexSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs. This module simplifies the process of capturing and responding to key expiration events, making it an essential tool for managing Redis cache objects.
 
 ### Key Features
 
-* <b>Expiration Event Monitoring:</b> Real-time tracking of Redis key expiration events.
-Automated Data Syncing: Seamlessly stores expired data in a secure database or external storage of your choice.
+* <b>Real-Time Expiration Listening:</b> Automatically listens to Redis key expiration events using keyspace notifications.
 
-* <b>Flexible Configuration:</b> Choose specific key patterns to monitor and customize your sync destination.
+* <b>Lightweight and Fast:</b> Optimized for high-performance Redis environments with minimal overhead.
 
-* <b>Lightweight and Efficient:</b> Designed to handle high-throughput Redis environments without compromising performance.
+* <b>Easy Integration:</b> Simple to set up and integrate with existing Node.js applications.
 
-RedisVault is perfect for teams needing an added layer of data resilience without sacrificing the efficiency of Redis caching.
+* <b>Flexible Use Cases:</b> Ideal for data syncing, logging, workflow automation, and more.
+
+<b>Configurable Storage Options:</b> Sync expired keys to databases or external systems (optional).
