@@ -74,7 +74,6 @@ class RexSync {
         await this.client.configSet("notify-keyspace-events", "Ex");
         this.client.subscribe(this.redisChannel, this.handleExpirationEvent.bind(this));
     }
-
 }
 
-export default RexSync;
+export  { RexSync };
