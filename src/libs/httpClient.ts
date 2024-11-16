@@ -1,6 +1,7 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+import axios, { AxiosInstance } from 'axios';
 import * as pkgJson from '../../package.json';
 import { AuthSchemes } from "../../types";
+import { RexSyncError } from './errHandler';
 
 export default class HttpClient {
     private defaultHeaders: object
@@ -24,29 +25,14 @@ export default class HttpClient {
             method: 'POST',
             headers: { 
                 ...this.defaultHeaders, 
-                ...opts.auth.type === 'ApiKey' ? { [opts.auth.key]: opts.auth.value } : {},
-                ...opts.auth.type === 'BearerToken' ? { 'Authorization': opts.auth.value } : {},
+                ...opts.auth.type === 'apikey' ? { [opts.auth.key]: opts.auth.value } : {},
+                ...opts.auth.type === 'bearerToken' ? { 'Authorization': `Bearer ${opts.auth.value}` } : {},
+                ...opts.auth.type === 'basic' ? { 'Authorization': `Basic ${btoa(`${opts.auth.key}:${opts.auth.value}`)}`} : {}
             },
             data: payload,
             withCredentials: true
-        }).then((response: any) => {
-            // handling error with 200 statusCode (graphQL)
-            if (response.data.errors) {
-                const { message, extensions } = response.data.errors[0];
-                delete extensions.stacktrace
-                console.log(message)
-                return;
-            }
         }).catch((error: any) => {
-            if (error.code === 'ECONNREFUSED') {
-                console.error(`[RED-VAULT] Error: Can not connect to ${error.config.url}`);
-                return;
-            }
-            if (error instanceof AxiosError) {
-                throw error;
-            } else {
-                throw new Error(error)
-            }
+            throw new RexSyncError(error.message)
         })
     };
 }
