@@ -1,5 +1,5 @@
 import { createClient, RedisClientType } from "redis";
-import { RedisVaultError } from "./errHandler"
+import { RexSyncError } from "./errHandler"
 
 class redisSubscriber {
     private redisUrl: string
@@ -16,7 +16,7 @@ class redisSubscriber {
 
     private handleError(error: Error | string): void {
         const message = error instanceof Error ? error.message : error;
-        throw new RedisVaultError(message);
+        throw new RexSyncError(message);
     }
 
     private init (): void {
