@@ -4,6 +4,7 @@ import HttpClient from "./libs/httpClient";
 import { timeStamp } from "./helper/timeStamp";
 import { sendMessage } from "./libs/rmq";
 import { RexSyncError } from "./libs/errHandler";
+import { isValidRabbitMQUrl, isValidUrl } from "./helper/urlValidator";
 
 const apiConn = new HttpClient();
 
@@ -22,9 +23,34 @@ class RexSync {
         this.client = redis.client();
         this.redisChannel = redis.channel();
     }
+
+    private validateRabbitMQConfig (
+        url: string,
+        exchange: string | undefined,
+        queue: string | undefined,
+        routing: string | undefined
+    ): void {
+        if (!isValidRabbitMQUrl(url)) {
+            throw new RexSyncError(
+                `Invalid RabbitMQ URL. Ensure the URL follows the format: 
+                'amqp(s)://[user:password@]host[:port][/vhost]'. Examples of valid URLs include:
+                  - amqp://guest:guest@localhost:5672
+                  - amqps://user:password@rabbit.example.com:5671/vhost
+                  - amqp://localhost
+                For more details, refer to the RabbitMQ URL specification.`
+            );
+        }
     
+        if (!exchange || !queue || !routing) {
+            throw new RexSyncError(
+                "RabbitMQ transport requires 'exchange', 'queue', and 'routing' parameters."
+            );
+        }
+    }
+
     private async handleWebhook(payload: EventPayload, transportConfig: Record<string, any>): Promise<void> {
         const { url, auth } = transportConfig;
+        if (!isValidUrl(url)) throw new RexSyncError("Invalid URL. Please provide a valid and correctly formatted URL.");
         if (!url || !auth) throw new RexSyncError("Webhook transport requires 'url' and 'auth' parameters.");
         await apiConn.send(payload, { url, auth });
     }
@@ -39,9 +65,9 @@ class RexSync {
     }
     
     private async handleRabbitMQ(payload: EventPayload, transportConfig: Record<string, any>): Promise<void> {
-        const { exchange, queue, routing } = transportConfig;
-        if (!exchange || !queue || !routing) throw new RexSyncError("RabbitMQ transport requires 'exchange', 'queue', and 'routing' parameters.");
-        await sendMessage(payload, { exchange, queue, routing });
+        const { url, exchange, queue, routing } = transportConfig;
+        this.validateRabbitMQConfig(url, exchange, queue, routing);
+        await sendMessage(payload, { url, exchange, queue, routing });
     }
 
     private async handleExpirationEvent(key: string, channel: string): Promise<void> {
