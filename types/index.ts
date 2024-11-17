@@ -23,12 +23,29 @@ export type EventPayload = {
     key: string
     expireOn: string
 }
-export type AuthSchemes = {
-    type: 'basic' | 'apikey' | 'bearerToken' | 'no-auth';
-    key: string | null
-    value: string | null
-};
+export type AuthSchemes = 
+    | BasicAuth
+    | ApiKey
+    | BearerToken
+    | NoAuth
 
+type BasicAuth = {
+    type: 'basic'
+    username: string
+    password: string
+}
+type ApiKey = {
+    type: 'apikey'
+    name: string
+    value: string
+}
+type BearerToken = {
+    type: 'bearerToken'
+    token: string
+}
+type NoAuth = {
+    type: 'no-auth'
+}
 type WebhookMethod = {
     method: 'webhook';
     url: string;

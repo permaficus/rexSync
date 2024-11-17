@@ -21,7 +21,7 @@
   },
   "author": "permaficus <abukhalif2019@gmail.com>",
   "license": "MIT",
-  "description": "exSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs",
+  "description": "rexSync allows you to handle expired keys efficiently, whether it's for syncing data, triggering workflows, or maintaining logs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/permaficus/rexSync.git"

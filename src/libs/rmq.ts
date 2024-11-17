@@ -16,8 +16,9 @@ class RabbitInstance extends EventEmitter {
     private reconnecting: boolean = false;
     private rmqUrl: string = null
 
-    private constructor() {
+    private constructor(rmqUrl: string) {
         super();
+        this.rmqUrl = rmqUrl;
         this.setMaxListeners(20);
         this.onError = this.onError.bind(this);
         this.onClosed = this.onClosed.bind(this);
@@ -47,9 +48,9 @@ class RabbitInstance extends EventEmitter {
         }
     }
 
-    public static getInstance(): RabbitInstance {
+    public static getInstance(url: string): RabbitInstance {
         if (!RabbitInstance.instance) {
-            RabbitInstance.instance = new RabbitInstance();
+            RabbitInstance.instance = new RabbitInstance(url);
         }
         return RabbitInstance.instance;
     }
@@ -101,7 +102,6 @@ class RabbitInstance extends EventEmitter {
             }
         } catch (error) {
             this.onError(error);
-            throw new RexSyncError(error.message);
         }
     }
 
@@ -110,7 +110,6 @@ class RabbitInstance extends EventEmitter {
             await args.channel.assertQueue(args.name, { ...args.options });
         } catch (error) {
             this.onError(error);
-            throw new RexSyncError(error.message);
         }
     }
 
@@ -122,7 +121,7 @@ class RabbitInstance extends EventEmitter {
         try {
             if (this.attempt > this.maxAttempt) {
                 this.reconnecting = false;
-                console.log(`[REX-SYNC] Max reconnection attempts (${this.maxAttempt}) reached`);
+                console.log(`[RBMQ] Max reconnection attempts (${this.maxAttempt}) reached`);
                 setTimeout(async () => {
                     this.attempt = 0;
                     await this.reconnect();
@@ -184,17 +183,17 @@ class RabbitInstance extends EventEmitter {
 
 async function sendMessage (
     payload: EventPayload,
-    config: { exchange: string, queue?: string, routing?: string }
+    config: { url: string, exchange: string, queue?: string, routing?: string }
 ): Promise<void> {
-    const rbmq = RabbitInstance.getInstance();
-    let rmqUrl: string | null = null;
+    const rbmq = RabbitInstance.getInstance(config.url);
+    const { url } = config;
 
     rbmq.on('connected', async (EventListener) => {
-        const { channel, conn } = EventListener;
+        const { channel } = EventListener;
 
         try {
             // Initiate exchange
-            const { exchange, url } = await rbmq.initiateExchange({
+            const { exchange } = await rbmq.initiateExchange({
                 name: config.exchange,
                 type: `topic`,
                 durable: true,
@@ -202,7 +201,6 @@ async function sendMessage (
                 internal: false,
                 channel: channel
             });
-            rmqUrl = url;
             // Create queue
             await rbmq.createQueue({
                 name: config.queue,
@@ -237,15 +235,15 @@ async function sendMessage (
     });
 
     rbmq.on('ENOTFOUND', () => {
-        console.error(`[RBMQ] Error: cannot reach ${rmqUrl.split('@')[1].split(`/`)[0]}.\n[RBMQ] Please check your internet connection}`);
+        console.error(`[RBMQ] Error: cannot reach ${url.split('@')[1].split(`/`)[0]}.\n[RBMQ] Please check your internet connection}`);
     });
 
     rbmq.on('reconnect', attempt => {
-        console.info(`[RBMQ] Retrying connect to: ${rmqUrl.split('@')[1]}, attempt: ${attempt}`);
+        console.info(`[RBMQ] Retrying connect to: ${url.split('@')[1]}, attempt: ${attempt}`);
     });
 
     rbmq.on('ECONNREFUSED', () => {
-        console.error(`[RBMQ] Connection to ${rmqUrl.split('@')[1]} refused}`);
+        console.error(`[RBMQ] Connection to ${url.split('@')[1]} refused}`);
     });
 
     rbmq.on('access_refused', error => {
