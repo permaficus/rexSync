@@ -1,6 +1,6 @@
 {
   "name": "rexsync",
-  "version": "1.0.49",
+  "version": "1.0.52",
   "main": "dist/index.js",
   "files": [
     "dist",
