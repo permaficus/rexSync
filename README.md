@@ -45,7 +45,7 @@ const rex = new RexSync({
         url: "https://yourapp.com/webhooks",
         auth: {
             type: 'apikey', // Valid types: 'bearerToken', 'basic', 'apikey', or 'no-auth'.
-            key: 'x-api-key',
+            name: 'x-api-key',
             value: '<your-api-key>'
         }
     },
