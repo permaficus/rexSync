@@ -14,18 +14,23 @@ class RexSync {
     private redisChannel: string;
 
     constructor (args: RexSyncInitConfig) {
-        this.args = args
-        this.init()
+        this.args = args;
+        this.validateUrls();
+        this.init();
     }
 
-    private init(): void {
-        // first we need to validate transport url (webhook & rabbitmq)
-        // @ts-ignore
-        const { url } = this.args.transport;
-        if (/^http(s)?/g.test(url) && !isValidUrl(url)) {
+    private validateUrls(): void {
+        // Ensure transport configuration is valid
+        if (this.args.transport.method === "function") {
+            return;
+        }
+
+        const { url, method } = this.args.transport;
+
+        if (method === "webhook" && !isValidUrl(url)) {
             throw new RexSyncError("Invalid URL. Please provide a valid and correctly formatted URL.")
         }
-        if (/^amqp(s)?/g.test(url) && !isValidRabbitMQUrl(url)) {
+        if (method === "rabbitmq" && !isValidRabbitMQUrl(url)) {
             throw new RexSyncError(
                 `Invalid RabbitMQ URL. Ensure the URL follows the format: 
                 'amqp(s)://[user:password@]host[:port][/vhost]'. Examples of valid URLs include:
@@ -35,9 +40,12 @@ class RexSync {
                 For more details, refer to the RabbitMQ URL specification.`
             );
         }
-        if (/^redis(s)?:/g.test(this.args.redisUrl) && !isValidRedisUrl(this.args.redisUrl)) {
+        if (!isValidRedisUrl(this.args.redisUrl)) {
             throw new RexSyncError("Invalid Redis URL. Please provide a valid URL.")
         }
+    }
+
+    private init(): void {
         const redis = new redisSubscriber(this.args.redisUrl);
         this.client = redis.client();
         this.redisChannel = redis.channel();
