@@ -20,7 +20,11 @@ class RexSync {
     }
 
     private validateUrls(): void {
-        // Ensure transport configuration is valid
+        if (!isValidRedisUrl(this.args.redisUrl)) {
+            throw new RexSyncError("Invalid Redis URL. Please provide a valid URL.")
+        }
+
+        // Return if transport method is user custom handler / function
         if (this.args.transport.method === "function") {
             return;
         }
@@ -39,9 +43,6 @@ class RexSync {
                   - amqp://localhost
                 For more details, refer to the RabbitMQ URL specification.`
             );
-        }
-        if (!isValidRedisUrl(this.args.redisUrl)) {
-            throw new RexSyncError("Invalid Redis URL. Please provide a valid URL.")
         }
     }
 
