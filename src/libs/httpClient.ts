@@ -25,9 +25,9 @@ export default class HttpClient {
             method: 'POST',
             headers: { 
                 ...this.defaultHeaders, 
-                ...opts.auth.type === 'apikey' ? { [opts.auth.key]: opts.auth.value } : {},
-                ...opts.auth.type === 'bearerToken' ? { 'Authorization': `Bearer ${opts.auth.value}` } : {},
-                ...opts.auth.type === 'basic' ? { 'Authorization': `Basic ${btoa(`${opts.auth.key}:${opts.auth.value}`)}`} : {}
+                ...opts.auth.type === 'apikey' ? { [opts.auth.name]: opts.auth.value } : {},
+                ...opts.auth.type === 'bearerToken' ? { 'Authorization': `Bearer ${opts.auth.token}` } : {},
+                ...opts.auth.type === 'basic' ? { 'Authorization': `Basic ${Buffer.from(`${opts.auth.username}:${opts.auth.password}`, 'base64')}`} : {}
             },
             data: payload,
             withCredentials: true
