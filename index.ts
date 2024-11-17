@@ -1,3 +1,3 @@
-import { RexSync } from "./src/index";
+import { RexSync, RexSyncError } from "./src/index";
 
-export { RexSync };
+export { RexSync, RexSyncError };

@@ -118,4 +118,4 @@ class RexSync {
     }
 }
 
-export  { RexSync };
+export  { RexSync, RexSyncError };
