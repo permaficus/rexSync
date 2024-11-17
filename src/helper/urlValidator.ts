@@ -33,3 +33,21 @@ export function isValidUrl (url: string): boolean {
         return false;
     }
 }
+
+/**
+ * Validates if the given string is a valid Redis URL.
+ *
+ * A valid Redis URL should follow the format:
+ * 'redis://hostname:port/db', where:
+ * - `hostname` can be an IP address or domain name.
+ * - `port` is optional and represents the Redis port (e.g., 6379).
+ * - `/db` is optional and specifies the database index (e.g., /0).
+ *
+ * @param {string} url - The Redis URL to validate.
+ * @returns {boolean} - Returns true if the URL is valid, otherwise false.
+ */
+
+export function isValidRedisUrl(url: string): boolean {
+    const redisUrlPattern = /^redis(s)?:\/\/([\w.-]+)(:\d+)?(\/\d+)?$/;
+    return redisUrlPattern.test(url)
+}
