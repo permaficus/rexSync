@@ -3,7 +3,7 @@ import { RexSyncError } from "./errHandler"
 
 class redisSubscriber {
     private redisUrl: string
-    private redisChannel: string = `__keyevent@0__:expired`;
+    private readonly redisChannel: string = `__keyevent@0__:expired`;
     private subscriber: RedisClientType | null = null;
 
     constructor(redisUrl: string) {
