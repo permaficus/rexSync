@@ -4,7 +4,7 @@ import HttpClient from "./libs/httpClient";
 import { timeStamp } from "./helper/timeStamp";
 import { sendMessage } from "./libs/rmq";
 import { RexSyncError } from "./libs/errHandler";
-import { isValidRabbitMQUrl, isValidUrl } from "./helper/urlValidator";
+import { isValidRabbitMQUrl, isValidRedisUrl, isValidUrl } from "./helper/urlValidator";
 
 const apiConn = new HttpClient();
 
@@ -19,6 +19,25 @@ class RexSync {
     }
 
     private init(): void {
+        // first we need to validate transport url (webhook & rabbitmq)
+        // @ts-ignore
+        const { url } = this.args.transport;
+        if (/^http(s)?/g.test(url) && !isValidUrl(url)) {
+            throw new RexSyncError("Invalid URL. Please provide a valid and correctly formatted URL.")
+        }
+        if (/^amqp(s)?/g.test(url) && !isValidRabbitMQUrl(url)) {
+            throw new RexSyncError(
+                `Invalid RabbitMQ URL. Ensure the URL follows the format: 
+                'amqp(s)://[user:password@]host[:port][/vhost]'. Examples of valid URLs include:
+                  - amqp://guest:guest@localhost:5672
+                  - amqps://user:password@rabbit.example.com:5671/vhost
+                  - amqp://localhost
+                For more details, refer to the RabbitMQ URL specification.`
+            );
+        }
+        if (/^redis(s)?:/g.test(this.args.redisUrl) && !isValidRedisUrl(this.args.redisUrl)) {
+            throw new RexSyncError("Invalid Redis URL. Please provide a valid URL.")
+        }
         const redis = new redisSubscriber(this.args.redisUrl);
         this.client = redis.client();
         this.redisChannel = redis.channel();
@@ -29,18 +48,7 @@ class RexSync {
         exchange: string | undefined,
         queue: string | undefined,
         routing: string | undefined
-    ): void {
-        if (!isValidRabbitMQUrl(url)) {
-            throw new RexSyncError(
-                `Invalid RabbitMQ URL. Ensure the URL follows the format: 
-                'amqp(s)://[user:password@]host[:port][/vhost]'. Examples of valid URLs include:
-                  - amqp://guest:guest@localhost:5672
-                  - amqps://user:password@rabbit.example.com:5671/vhost
-                  - amqp://localhost
-                For more details, refer to the RabbitMQ URL specification.`
-            );
-        }
-    
+    ): void {    
         if (!exchange || !queue || !routing) {
             throw new RexSyncError(
                 "RabbitMQ transport requires 'exchange', 'queue', and 'routing' parameters."
@@ -50,7 +58,6 @@ class RexSync {
 
     private async handleWebhook(payload: EventPayload, transportConfig: Record<string, any>): Promise<void> {
         const { url, auth } = transportConfig;
-        if (!isValidUrl(url)) throw new RexSyncError("Invalid URL. Please provide a valid and correctly formatted URL.");
         if (!url || !auth) throw new RexSyncError("Webhook transport requires 'url' and 'auth' parameters.");
         await apiConn.send(payload, { url, auth });
     }
