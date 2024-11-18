@@ -21,7 +21,7 @@ export interface QueueTypeInterface {
 }
 export type EventPayload = {
     key: string
-    expireOn: string
+    expiredAt: string
 }
 export type AuthSchemes = 
     | BasicAuth
