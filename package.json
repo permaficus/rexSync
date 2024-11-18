@@ -1,6 +1,6 @@
 {
   "name": "rexsync",
-  "version": "1.0.52",
+  "version": "1.0.60",
   "main": "dist/index.js",
   "files": [
     "dist",
@@ -17,7 +17,7 @@
   ],
   "scripts": {
     "build": "npx enmav --update-version && rm -rf dist && tsc",
-    "build:release": "rm -rf dist && npx enmav --update-version && tsc && npm publish --access=public"
+    "build:release": "npx enmav --update-version && rm -rf dist && tsc && npm publish --access=public"
   },
   "author": "permaficus <abukhalif2019@gmail.com>",
   "license": "MIT",
