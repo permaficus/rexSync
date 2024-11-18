@@ -93,7 +93,7 @@ class RexSync {
                 console.log(`[REX-EVENT] ${timeStamp()}: Received expiration event for key: ${key}`)
             }
             const { method, ...transportConfig } = this.args.transport;
-            const payload: EventPayload = { key, expireOn: timeStamp() };
+            const payload: EventPayload = { key, expiredAt: timeStamp() };
     
             const methodHandlers: Record<string, () => Promise<void>> = {
                 webhook: () => this.handleWebhook(payload, transportConfig),
