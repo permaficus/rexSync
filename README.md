@@ -64,3 +64,30 @@ const rex = new RexSync({
 rex.startListening();
 
 ```
+
+### Webhook Auth
+
+1. `bearerToken`
+
+```javascript
+transport: {
+    method: "webhook",
+    auth: {
+        type: "bearerToken",
+        token: "<authorization token>"
+    }
+}
+```
+
+2. `basic`
+
+```javascript
+transport: {
+    method: "webhook",
+    auth: {
+        type: "basic",
+        username: "<username>",
+        password: "<password>"
+    }
+}
+```
