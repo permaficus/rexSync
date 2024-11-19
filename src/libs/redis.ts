@@ -1,46 +1,48 @@
-import { createClient, RedisClientType } from "redis";
-import { RexSyncError } from "./errHandler"
+import { createClient, RedisClientType } from 'redis'
+import { RexSyncError } from '../libs/errHandler'
 
 class redisSubscriber {
-    private redisUrl: string
-    private readonly redisChannel: string = `__keyevent@0__:expired`;
-    private subscriber: RedisClientType | null = null;
+  private redisUrl: string
+  private readonly redisChannel: string = `__keyevent@0__:expired`
+  private subscriber: RedisClientType | null = null
 
-    constructor(redisUrl: string) {
-        if (!redisUrl) {
-            this.handleError(`Error: Redis connection URL not specified. Please provide a valid Redis URL to establish the connection.`)
-        }
-        this.redisUrl = redisUrl;
-        this.init();
+  constructor(redisUrl: string) {
+    if (!redisUrl) {
+      this.handleError(
+        `Error: Redis connection URL not specified. Please provide a valid Redis URL to establish the connection.`
+      )
     }
+    this.redisUrl = redisUrl
+    this.init()
+  }
 
-    private handleError(error: Error | string): void {
-        const message = error instanceof Error ? error.message : error;
-        throw new RexSyncError(message);
-    }
+  private handleError(error: Error | string): void {
+    const message = error instanceof Error ? error.message : error
+    throw new RexSyncError(message)
+  }
 
-    private async init (): Promise<void> {
-        if (!this.subscriber) {
-            this.subscriber = createClient({
-                url: this.redisUrl
-            });
+  private async init(): Promise<void> {
+    if (!this.subscriber) {
+      this.subscriber = createClient({
+        url: this.redisUrl,
+      })
 
-            this.subscriber.on('error', (err) => {
-                this.handleError(`[REDIS] Connection Error: ${err.message || err.code}`);
-            });
-            await this.subscriber.connect().catch((err) => {
-                this.handleError(`[REDIS] Error during initial connection: ${err.message || err.code}`);
-            });
-        }
+      this.subscriber.on('error', (err) => {
+        this.handleError(`[REDIS] Connection Error: ${err.message || err.code}`)
+      })
+      await this.subscriber.connect().catch((err) => {
+        this.handleError(`[REDIS] Error during initial connection: ${err.message || err.code}`)
+      })
     }
+  }
 
-    client (): RedisClientType {
-        return this.subscriber;
-    }
- 
-    channel (): string {
-        return this.redisChannel;
-    }
+  client(): RedisClientType {
+    return this.subscriber
+  }
+
+  channel(): string {
+    return this.redisChannel
+  }
 }
 
 export { redisSubscriber, RedisClientType }
