@@ -1,7 +1,16 @@
 {
   "name": "rexsync",
-  "version": "1.0.60",
-  "main": "dist/index.js",
+  "version": "1.0.69",
+  "main": "dist/cjs/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/esm/src/index.d.ts",
+  "exports": {
+    ".": {
+      "require": "./dist/cjs/src/index.js",
+      "import": "./dist/esm/src/index.js"
+    }
+  },
+  "sideEffects": false,
   "files": [
     "dist",
     "package.json",
@@ -13,11 +22,15 @@
     "redis-vault",
     "redis expiry sync",
     "cache sync",
-    "redis cache"
+    "redis cache",
+    "redis subscriber"
   ],
   "scripts": {
-    "build": "npx enmav --update-version && rm -rf dist && tsc",
-    "build:release": "npx enmav --update-version && rm -rf dist && tsc && npm publish --access=public"
+    "rewrite:import": "node rewriteImports.js",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json && npm run rewrite:import",
+    "build": "npx enmav --update-version && rimraf ./dist && npm run build:cjs && npm run build:esm",
+    "build:release": "npx enmav --update-version && rimraf ./dist && npm run build:cjs && npm run build:esm && npm publish --access=public"
   },
   "author": "permaficus <abukhalif2019@gmail.com>",
   "license": "MIT",
@@ -37,6 +50,7 @@
     "typescript": "^5.6.3"
   },
   "devDependencies": {
-    "enmav": "^0.7.12"
+    "enmav": "^0.7.12",
+    "rimraf": "^6.0.1"
   }
 }
