@@ -1,19 +1,15 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
-    "target": "ES2017",                                  /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */                               
-    /* Modules */
-    "module": "CommonJS",                                /* Specify what module code is generated. */
-    "rootDir": "./",                                     /* Specify the root folder within your source files. */
-    /* JavaScript Support */
-    /*"allowJs": true,                                     /* Allow JavaScript files to be a part of your program. Use the 'checkJS' option to get errors from these files. */
-    "outDir": "dist",                                    /* Specify an output folder for all emitted files. */
-    "esModuleInterop": true,
     "moduleResolution": "node",
+    "baseUrl": "./src",
     "declaration": true,
-    "emitDeclarationOnly": false,
-    "declarationMap": false,
-    "resolveJsonModule": true
+    "sourceMap": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "outDir": "./dist",
+    "lib": ["ESNext"]
   },
-  "exclude": ["node_modules", "dist", " tsconfig.json", "enmav.config.json"]
+  "exclude": ["dist", "node_modules", "enmav.config.json", "rewriteImports.js"]
 }
