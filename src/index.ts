@@ -79,9 +79,9 @@ class RexSync {
   }
 
   private async handleRabbitMQ(payload: EventPayload, transportConfig: Record<string, any>): Promise<void> {
-    const { url, exchange, queue, routing } = transportConfig
+    const { url, exchange, type, queue, routing } = transportConfig
     this.validateRabbitMQConfig(url, exchange, queue, routing)
-    await sendMessage(payload, { url, exchange, queue, routing })
+    await sendMessage(payload, { url, exchange, type, queue, routing })
   }
 
   private async handleExpirationEvent(key: string, channel: string): Promise<void> {

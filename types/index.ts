@@ -1,12 +1,12 @@
 export interface BrokerExchangeInterface {
   channel: any
   name: string | undefined | null
-  type: 'direct' | 'fanout' | 'headers' | 'topic'
+  type: ExchangeType
   durable: boolean
   autoDelete?: boolean
   internal?: boolean
 }
-
+export type ExchangeType = 'direct' | 'fanout' | 'headers' | 'topic' | 'x-consistent-has'
 export interface QueueTypeInterface {
   name: string | undefined | null
   channel: any
@@ -52,6 +52,7 @@ type RabbitMQMethod = {
   method: 'rabbitmq'
   url: string
   exchange: string
+  type?: ExchangeType
   queue: string
   routing: string
 }
