@@ -54,6 +54,7 @@ const rex = new RexSync({
     transport: {
         method: "rabbitmq",
         exchange: "<rabbitmq-exchange>",
+        type: "<rabbitmq-exchange-type>",
         queue: "<rabbitmq-queue>",
         routing: "<rabbitmq-routing-key>",
         url: "<rabbitmq-url>"
@@ -64,6 +65,9 @@ const rex = new RexSync({
 rex.startListening();
 
 ```
+>[!NOTE]
+>
+> The `type` in RabbitMQ transport defines the exchange type used for routing messages. Supported types are: `direct`, `fanout`, `headers`, `topic`, and `x-consistent-hash`. If no type is specified, the default exchange type is `topic`.
 
 ### Webhook Auth
 

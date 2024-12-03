@@ -1,6 +1,6 @@
 import * as MessageBroker from 'amqplib'
 import EventEmitter from 'events'
-import { BrokerExchangeInterface, EventPayload, QueueTypeInterface } from '../../types'
+import { BrokerExchangeInterface, EventPayload, ExchangeType, QueueTypeInterface } from '../../types'
 import { RexSyncError } from '../libs/errHandler'
 
 class RabbitInstance extends EventEmitter {
@@ -175,7 +175,7 @@ class RabbitInstance extends EventEmitter {
 
 async function sendMessage(
   payload: EventPayload,
-  config: { url: string; exchange: string; queue?: string; routing?: string }
+  config: { url: string; exchange: string; type?: ExchangeType; queue?: string; routing?: string }
 ): Promise<void> {
   const rbmq = RabbitInstance.getInstance(config.url)
   const { url } = config
@@ -187,7 +187,7 @@ async function sendMessage(
       // Initiate exchange
       const { exchange } = await rbmq.initiateExchange({
         name: config.exchange,
-        type: `topic`,
+        type: config.type ?? 'topic',
         durable: true,
         autoDelete: false,
         internal: false,
